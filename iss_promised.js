@@ -23,7 +23,7 @@ const fetchCoordsByIP = function(body) {
 };
 
 const fetchISSFlyOverTimes = (jsonCoords) => {
-  // const { latitude, longitude } = JSON.parse(body).data;*** SUGGESTED IMPLEMENTATION ***
+  // const { latitude, longitude } = JSON.parse(body).data;*** SUGGESTED IMPLEMENTATION *** BROKEN
   const coords = {
     lat: JSON.parse(jsonCoords).latitude,
     lon: JSON.parse(jsonCoords).longitude
@@ -44,7 +44,9 @@ const fetchISSFlyOverTimes = (jsonCoords) => {
  *   Example output:
  *   Next pass at Mon Jun 10 2019 20:11:44 GMT-0700 (Pacific Daylight Time) for 468 seconds!
  */
- const printPassTimes = function(passTimes) {
+ const printPassTimes = function(passTimesJSON) {
+  const passTimes = JSON.parse(passTimesJSON).response;
+
   for (const pass of passTimes) {
     const datetime = new Date(0);
     datetime.setUTCSeconds(pass.risetime);
@@ -54,13 +56,16 @@ const fetchISSFlyOverTimes = (jsonCoords) => {
 };
 
 const nextISSTimesForMyLocation = () => {
-
+  
+  fetchMyIP()
+  .then(fetchCoordsByIP)
+  .then(fetchISSFlyOverTimes) 
+  .then(printPassTimes)
+  .catch((error) => {
+    console.log("It didn't work: ", error.message);
+  });
 };
 
 module.exports = { 
-  fetchMyIP, 
-  fetchCoordsByIP,
-  fetchISSFlyOverTimes,
-  printPassTimes,
   nextISSTimesForMyLocation};
 
